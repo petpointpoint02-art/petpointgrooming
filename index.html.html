@@ -1,0 +1,1444 @@
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- FontAwesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Google Fonts: Inter -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- EmailJS Browser SDK v4 -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    brandYellow: '#f6ca2b',
+                    brandBg: '#f8f7f5',
+                    brandBlue: '#3c97c6',
+                    brandPink: '#fe9da8',
+                    brandDark: '#1E293B',
+                    brandSoftBlue: '#EBF5FA',
+                    brandSoftYellow: '#FFFBEA',
+                    brandSoftPink: '#FFF0F3'
+                },
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                },
+                boxShadow: {
+                    'soft': '0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.01)',
+                    'card': '0 4px 20px rgba(0, 0, 0, 0.05)',
+                    'glow': '0 0 20px rgba(246, 202, 43, 0.35)',
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    body {
+        background-color: #f8f7f5;
+        color: #1E293B;
+        font-family: 'Inter', sans-serif;
+        overflow-x: hidden;
+    }
+
+    /* Multi-Page Transition Styling */
+    .page-view {
+        display: none;
+        opacity: 0;
+        transform: translateY(8px);
+        transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+    }
+    .page-view.active {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Active Navigation Link */
+    .nav-link.active {
+        color: #3c97c6;
+        font-weight: 700;
+        border-bottom: 2.5px solid #3c97c6;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #f8f7f5;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+</style>
+
+
+<!-- GLOBAL NAVBAR -->
+<header class="sticky top-0 z-50 bg-[#f8f7f5]/90 backdrop-blur-md border-b border-gray-200/70 transition-all duration-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-20">
+            
+            <!-- Brand Logo & Tagline -->
+            <div class="flex items-center gap-3 cursor-pointer group" onclick="navigateTo('home')">
+                <div class="w-11 h-11 bg-brandYellow rounded-2xl flex items-center justify-center shadow-md transform -rotate-3 group-hover:rotate-0 transition-all duration-300">
+                    <i class="fa-solid fa-paw text-2xl text-brandDark"></i>
+                </div>
+                <div>
+                    <span class="text-2xl font-extrabold tracking-tight text-brandDark block leading-none">PET POINT</span>
+                    <span class="text-[10px] font-bold tracking-widest text-brandBlue uppercase block mt-1">Groom. Check. Care.</span>
+                </div>
+            </div>
+
+            <!-- Desktop Multi-Page Navigation Menu -->
+            <nav class="hidden lg:flex items-center space-x-6 text-sm">
+                <button onclick="navigateTo('home')" id="nav-home" class="nav-link py-2 font-medium text-gray-600 hover:text-brandBlue transition">Home</button>
+                <button onclick="navigateTo('about')" id="nav-about" class="nav-link py-2 font-medium text-gray-600 hover:text-brandBlue transition">About</button>
+                <button onclick="navigateTo('services')" id="nav-services" class="nav-link py-2 font-medium text-gray-600 hover:text-brandBlue transition">Services</button>
+                <button onclick="navigateTo('how-it-works')" id="nav-how-it-works" class="nav-link py-2 font-medium text-gray-600 hover:text-brandBlue transition">How It Works</button>
+                <button onclick="navigateTo('contact')" id="nav-contact" class="nav-link py-2 font-medium text-gray-600 hover:text-brandBlue transition">Contact</button>
+                <button onclick="navigateTo('dashboard')" id="nav-dashboard" class="nav-link hidden py-2 font-medium text-brandBlue hover:text-[#3182ac] transition"><i class="fa-solid fa-gauge mr-1"></i> Dashboard</button>
+            </nav>
+
+            <!-- Action Controls / Dynamic Auth Button -->
+            <div class="hidden lg:flex items-center gap-3" id="auth-header-controls">
+                <!-- Dynamic Auth Actions injected via JavaScript -->
+            </div>
+
+            <!-- Mobile Hamburger Button -->
+            <div class="lg:hidden flex items-center">
+                <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="p-2.5 rounded-xl text-gray-700 hover:bg-gray-200/60 focus:outline-none transition">
+                    <i class="fa-solid fa-bars text-xl" id="menu-icon"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Drawer -->
+    <div id="mobile-menu" class="hidden lg:hidden bg-[#f8f7f5] border-b border-gray-200 px-4 pt-2 pb-6 space-y-2 shadow-xl">
+        <button onclick="navigateTo('home')" class="block w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium text-gray-700 hover:bg-brandSoftBlue hover:text-brandBlue">Home</button>
+        <button onclick="navigateTo('about')" class="block w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium text-gray-700 hover:bg-brandSoftBlue hover:text-brandBlue">About</button>
+        <button onclick="navigateTo('services')" class="block w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium text-gray-700 hover:bg-brandSoftBlue hover:text-brandBlue">Services</button>
+        <button onclick="navigateTo('how-it-works')" class="block w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium text-gray-700 hover:bg-brandSoftBlue hover:text-brandBlue">How It Works</button>
+        <button onclick="navigateTo('contact')" class="block w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium text-gray-700 hover:bg-brandSoftBlue hover:text-brandBlue">Contact</button>
+        <button onclick="navigateTo('dashboard')" id="mobile-nav-dashboard" class="hidden block w-full text-left px-4 py-2.5 rounded-xl text-sm font-bold text-brandBlue hover:bg-brandSoftBlue">Dashboard</button>
+        
+        <div class="pt-3 border-t border-gray-200 space-y-2" id="mobile-auth-controls">
+            <!-- Mobile Auth Injected -->
+        </div>
+    </div>
+</header>
+
+<!-- PAGE CONTAINER (ROUTER) -->
+<main class="flex-grow">
+
+    <!-- ================================================== -->
+    <!-- 1. HOME PAGE (`index.html`) -->
+    <!-- ================================================== -->
+    <section id="page-home" class="page-view active">
+        <!-- Hero Section -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Hero Content -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brandSoftYellow border border-brandYellow/40 text-brandDark font-semibold text-xs sm:text-sm shadow-sm">
+                        <span class="w-2.5 h-2.5 rounded-full bg-brandYellow animate-pulse"></span>
+                        PET POINT • Groom. Check. Care.
+                    </div>
+                    
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-brandDark leading-tight tracking-tight">
+                        More than just grooming.<br>
+                        <span class="text-brandBlue">We help pet owners care</span> for their pets with greater comfort and information.
+                    </h1>
+                    
+                    <p class="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal">
+                        Modern pet-care startup combining professional hygiene grooming with essential basic health observation.
+                    </p>
+
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                        <button onclick="handleBookNowClick()" class="w-full sm:w-auto bg-brandYellow hover:bg-[#e0b722] text-brandDark font-extrabold px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition duration-200 text-base flex items-center justify-center gap-3">
+                            <i class="fa-solid fa-calendar-check text-brandDark"></i>
+                            <span>BOOK A SERVICE</span>
+                        </button>
+                        
+                        <button onclick="navigateTo('services')" class="w-full sm:w-auto bg-white hover:bg-gray-50 border-2 border-gray-200 text-brandDark font-bold px-8 py-4 rounded-2xl shadow-sm hover:shadow-md transition duration-200 text-base flex items-center justify-center gap-2">
+                            <span>EXPLORE SERVICES</span>
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Realistic Photography Hero Image -->
+                <div class="lg:col-span-5 relative">
+                    <div class="relative mx-auto max-w-md lg:max-w-none">
+                        <div class="absolute -top-6 -left-6 w-64 h-64 bg-brandYellow/30 rounded-full blur-3xl -z-10"></div>
+                        <div class="absolute -bottom-6 -right-6 w-64 h-64 bg-brandPink/30 rounded-full blur-3xl -z-10"></div>
+                        
+                        <div class="overflow-hidden rounded-3xl shadow-card bg-white border-4 border-white">
+                            <img src="https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&w=1000&q=80" 
+                                 alt="Realistic Grooming Pet Care Photography" 
+                                 class="w-full h-[380px] sm:h-[460px] object-cover hover:scale-105 transition-transform duration-500">
+                        </div>
+
+                        <div class="absolute -bottom-6 -left-4 bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-xl bg-brandSoftPink flex items-center justify-center text-brandPink font-bold">
+                                <i class="fa-solid fa-notes-medical text-2xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Groom + Check</p>
+                                <p class="text-sm font-bold text-brandDark">Comfort & Care Combined</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Overview Section (3 Main Services) -->
+        <div class="bg-white py-16 border-y border-gray-200/60">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-12">
+                    <span class="text-brandBlue font-bold text-xs uppercase tracking-widest">Our Core Offerings</span>
+                    <h2 class="text-3xl font-extrabold text-brandDark mt-1">Services Overview</h2>
+                    <p class="text-gray-600 text-sm mt-2">Designed for the ultimate cleanliness, safety, and health of your pet.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Grooming -->
+                    <div class="bg-brandBg rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-md transition space-y-4">
+                        <div class="w-14 h-14 bg-brandSoftYellow rounded-2xl flex items-center justify-center text-brandDark text-2xl">
+                            <i class="fa-solid fa-shower text-amber-600"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-brandDark">GROOMING</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            Professional grooming focused on your pet's cleanliness and comfort.
+                        </p>
+                    </div>
+
+                    <!-- Basic Health Check -->
+                    <div class="bg-brandBg rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-md transition space-y-4">
+                        <div class="w-14 h-14 bg-brandSoftBlue rounded-2xl flex items-center justify-center text-brandBlue text-2xl">
+                            <i class="fa-solid fa-stethoscope"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-brandDark">BASIC HEALTH CHECK</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            Basic observation to help pet owners understand their pet's condition.
+                        </p>
+                    </div>
+
+                    <!-- Groom + Check -->
+                    <div class="bg-brandBg rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-md transition space-y-4">
+                        <div class="w-14 h-14 bg-brandSoftPink rounded-2xl flex items-center justify-center text-brandPink text-2xl">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-brandDark">GROOM + CHECK</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            A combination of grooming and basic health observation.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="text-center mt-12">
+                    <button onclick="handleBookNowClick()" class="bg-brandYellow hover:bg-[#e0b722] text-brandDark font-extrabold px-8 py-4 rounded-2xl shadow-md transition">
+                        BOOK YOUR PET'S SERVICE
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================== -->
+    <!-- 2. ABOUT US PAGE (`about.html`) -->
+    <!-- ================================================== -->
+    <section id="page-about" class="page-view">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+            <div class="text-center max-w-3xl mx-auto mb-14">
+                <span class="text-brandBlue font-bold text-xs uppercase tracking-widest">About PET POINT</span>
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-brandDark mt-1">Care & Convenience Reimagined</h1>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-16">
+                <div class="lg:col-span-6 space-y-6">
+                    <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-card">
+                        <h2 class="text-2xl font-bold text-brandDark mb-4">Who We Are</h2>
+                        <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                            PET POINT merupakan layanan pet care yang menggabungkan grooming dengan basic health check untuk membantu pemilik memberikan perawatan yang lebih baik kepada hewan peliharaan.
+                        </p>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            Kami percaya bahwa setiap hewan peliharaan berhak mendapatkan pengalaman kebersihan yang menyenangkan serta pemantauan fisik dasar untuk kenyamanan jangka panjang.
+                        </p>
+                    </div>
+
+                    <div class="bg-brandSoftYellow p-6 rounded-2xl border border-brandYellow/40">
+                        <h3 class="text-xs font-bold text-amber-800 uppercase tracking-wider mb-2">Our Concept</h3>
+                        <p class="text-xl font-extrabold text-brandDark">GROOM → CHECK → CARE</p>
+                    </div>
+                </div>
+
+                <!-- Realistic Photography for About Us -->
+                <div class="lg:col-span-6">
+                    <div class="relative rounded-3xl overflow-hidden shadow-xl border-4 border-white">
+                        <img src="https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?auto=format&fit=crop&w=1000&q=80" 
+                             alt="Realistic Pet Owner and Vet Examination Photography" 
+                             class="w-full h-[400px] object-cover">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Purpose Section -->
+            <div class="bg-white rounded-3xl p-8 sm:p-12 border border-gray-100 shadow-card max-w-4xl mx-auto">
+                <div class="w-12 h-12 bg-brandSoftBlue rounded-2xl flex items-center justify-center text-brandBlue text-xl mb-4">
+                    <i class="fa-solid fa-bullseye"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-brandDark mb-3">Our Purpose</h3>
+                <p class="text-gray-600 text-base leading-relaxed">
+                    Membantu pemilik hewan mendapatkan layanan perawatan yang nyaman sekaligus informasi dasar mengenai kondisi hewan mereka.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================== -->
+    <!-- 3. SERVICES PAGE (`services.html`) -->
+    <!-- ================================================== -->
+    <section id="page-services" class="page-view">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-brandBlue font-bold text-xs uppercase tracking-widest">Our Offerings</span>
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-brandDark mt-1">PET POINT Services</h1>
+            </div>
+
+            <!-- 3 Primary Services -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                
+                <!-- 01 — GROOMING -->
+                <div class="bg-white rounded-3xl overflow-hidden shadow-card border border-gray-100 flex flex-col justify-between hover:shadow-xl transition group">
+                    <div>
+                        <div class="relative h-52 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&w=800&q=80" 
+                                 alt="Realistic Pet Grooming Photography" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <span class="absolute top-4 left-4 bg-brandDark text-white font-bold text-xs px-3 py-1 rounded-full shadow">
+                                01
+                            </span>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold text-brandDark mb-2">01 — GROOMING</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                                Perawatan kebersihan dan kenyamanan hewan.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="p-6 pt-0">
+                        <button onclick="selectServiceAndBook('Grooming')" class="w-full bg-brandYellow hover:bg-[#e0b722] text-brandDark font-extrabold py-3.5 rounded-2xl shadow transition flex items-center justify-center gap-2">
+                            <span>BOOK THIS SERVICE</span>
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 02 — BASIC HEALTH CHECK -->
+                <div class="bg-white rounded-3xl overflow-hidden shadow-card border border-gray-100 flex flex-col justify-between hover:shadow-xl transition group">
+                    <div>
+                        <div class="relative h-52 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=800&q=80" 
+                                 alt="Realistic Basic Pet Health Check Photography" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <span class="absolute top-4 left-4 bg-brandDark text-white font-bold text-xs px-3 py-1 rounded-full shadow">
+                                02
+                            </span>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold text-brandDark mb-2">02 — BASIC HEALTH CHECK</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                                Pemeriksaan/pengamatan dasar kondisi hewan.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="p-6 pt-0">
+                        <button onclick="selectServiceAndBook('Basic Health Check')" class="w-full bg-brandYellow hover:bg-[#e0b722] text-brandDark font-extrabold py-3.5 rounded-2xl shadow transition flex items-center justify-center gap-2">
+                            <span>BOOK THIS SERVICE</span>
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 03 — GROOM + CHECK -->
+                <div class="bg-white rounded-3xl overflow-hidden shadow-card border-2 border-brandYellow flex flex-col justify-between hover:shadow-xl transition group">
+                    <div>
+                        <div class="relative h-52 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=80" 
+                                 alt="Realistic Grooming and Check Combination Photography" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <span class="absolute top-4 left-4 bg-brandYellow text-brandDark font-extrabold text-xs px-3 py-1 rounded-full shadow">
+                                03 — Recommended
+                            </span>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold text-brandDark mb-2">03 — GROOM + CHECK</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                                Kombinasi grooming dan basic health check.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="p-6 pt-0">
+                        <button onclick="selectServiceAndBook('Groom + Check')" class="w-full bg-brandYellow hover:bg-[#e0b722] text-brandDark font-extrabold py-3.5 rounded-2xl shadow transition flex items-center justify-center gap-2">
+                            <span>BOOK THIS SERVICE</span>
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SEPARATE OPTION: PICK-UP & DROP-OFF -->
+            <div class="bg-gradient-to-r from-brandSoftBlue via-white to-brandSoftPink rounded-3xl p-8 sm:p-12 border border-gray-200/80 shadow-md flex flex-col lg:flex-row items-center justify-between gap-8">
+                <div class="space-y-3 max-w-2xl text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brandPink/20 text-rose-700 font-bold text-xs">
+                        <i class="fa-solid fa-truck-pickup"></i> Transportation Option
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-brandDark">Pick-up & Drop-off</h2>
+                    <p class="text-gray-600 text-sm sm:text-base leading-relaxed">
+                        Need help bringing your pet to PET POINT? Add our transportation option to your booking.
+                    </p>
+                </div>
+
+                <div class="flex-shrink-0 w-full sm:w-auto">
+                    <button onclick="selectTransportAndBook()" class="w-full sm:w-auto bg-brandPink hover:bg-[#f3818e] text-white font-extrabold px-8 py-4 rounded-2xl shadow-lg transition flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-car-side"></i>
+                        <span>ADD PICK-UP & DROP-OFF</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ================================================== -->
+    <!-- 4. HOW IT WORKS PAGE (`how-it-works.html`) -->
+    <!-- ================================================== -->
+    <section id="page-how-it-works" class="page-view">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+            <div class="text-center max-w-2xl mx-auto mb-14">
+                <span class="text-brandBlue font-bold text-xs uppercase tracking-widest">Step by Step</span>
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-brandDark mt-1">How PET POINT Works</h1>
+            </div>
+
+            <!-- 6 Steps Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Step 01 -->
+                <div class="bg-white rounded-3xl p-8 shadow-card border border-gray-100 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <span class="text-3xl font-black text-brandBlue block">01</span>
+                        <h3 class="text-xl font-bold text-brandDark">CREATE AN ACCOUNT</h3>
+                        <p class="text-gray-600 text-sm">Create your PET POINT account.</p>
+                    </div>
+                </div>
+
+                <!-- Step 02 -->
+                <div class="bg-white rounded-3xl p-8 shadow-card border border-gray-100 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <span class="text-3xl font-black text-brandBlue block">02</span>
+                        <h3 class="text-xl font-bold text-brandDark">CHOOSE YOUR SERVICE</h3>
+                        <p class="text-gray-600 text-sm">Choose Grooming, Basic Health Check, or Groom + Check.</p>
+                    </div>
+                </div>
+
+                <!-- Step 03 -->
+                <div class="bg-white rounded-3xl p-8 shadow-card border border-gray-100 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <span class="text-3xl font-black text-brandBlue block">03</span>
+                        <h3 class="text-xl font-bold text-brandDark">BOOK ONLINE</h3>
+                        <p class="text-gray-600 text-sm">Fill out the booking form directly on the website.</p>
+                    </div>
+                </div>
+
+                <!-- Step 04 -->
+                <div class="bg-white rounded-3xl p-8 shadow-card border border-gray-100 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <span class="text-3xl font-black text-brandBlue block">04</span>
+                        <h3 class="text-xl font-bold text-brandDark">PET ARRIVES</h3>
+                        <p class="text-gray-600 text-sm">Bring your pet to PET POINT or choose Pick-up & Drop-off.</p>
+                    </div>
+                </div>
+
+                <!-- Step 05 -->
+                <div class="bg-white rounded-3xl p-8 shadow-card border border-gray-100 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <span class="text-3xl font-black text-brandBlue block">05</span>
+                        <h3 class="text-xl font-bold text-brandDark">GROOM & CHECK</h3>
+                        <p class="text-gray-600 text-sm">Your pet receives the selected service.</p>
+                    </div>
+                </div>
+
+                <!-- Step 06 -->
+                <div class="bg-white rounded-3xl p-8 shadow-card border border-gray-100 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <span class="text-3xl font-black text-brandBlue block">06</span>
+                        <h3 class="text-xl font-bold text-brandDark">SERVICE COMPLETED</h3>
+                        <p class="text-gray-600 text-sm">Your pet's selected service is completed by the PET POINT team.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-center mt-12">
+                <button onclick="handleBookNowClick()" class="bg-brandYellow hover:bg-[#e0b722] text-brandDark font-extrabold px-8 py-4 rounded-2xl shadow-lg transition">
+                    BOOK A SERVICE NOW
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================== -->
+    <!-- 5. LOGIN PAGE (`login.html`) -->
+    <!-- ================================================== -->
+    <section id="page-login" class="page-view">
+        <div class="max-w-md mx-auto px-4 py-16">
+            <div class="bg-white rounded-3xl p-8 shadow-card border border-gray-100 space-y-6">
+                <div class="text-center">
+                    <div class="w-14 h-14 bg-brandYellow rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-md">
+                        <i class="fa-solid fa-paw text-2xl text-brandDark"></i>
+                    </div>
+                    <h1 class="text-2xl font-extrabold text-brandDark">Login to PET POINT</h1>
+                    <p class="text-gray-500 text-xs mt-1">Sign in to schedule and manage your pet bookings</p>
+                </div>
+
+                <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Email</label>
+                        <input type="email" id="login-email" required placeholder="user@example.com" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brandBlue outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Password</label>
+                        <input type="password" id="login-password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brandBlue outline-none transition">
+                    </div>
+
+                    <button type="submit" class="w-full bg-brandBlue hover:bg-[#3182ac] text-white font-bold py-3.5 rounded-xl shadow transition text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>LOGIN</span>
+                    </button>
+                </form>
+
+                <div class="text-center pt-2 border-t border-gray-100 text-xs text-gray-500">
+                    Don't have an account? <button onclick="navigateTo('register')" class="text-brandBlue font-bold hover:underline">Create an account</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================== -->
+    <!-- 6. REGISTER PAGE (`register.html`) -->
+    <!-- ================================================== -->
+    <section id="page-register" class="page-view">
+        <div class="max-w-md mx-auto px-4 py-16">
+            <div class="bg-white rounded-3xl p-8 shadow-card border border-gray-100 space-y-6">
+                <div class="text-center">
+                    <div class="w-14 h-14 bg-brandSoftPink rounded-2xl flex items-center justify-center mx-auto mb-3">
+                        <i class="fa-solid fa-user-plus text-2xl text-brandPink"></i>
+                    </div>
+                    <h1 class="text-2xl font-extrabold text-brandDark">Create Account</h1>
+                    <p class="text-gray-500 text-xs mt-1">Join PET POINT today</p>
+                </div>
+
+                <form onsubmit="handleRegisterSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Full Name</label>
+                        <input type="text" id="reg-name" required placeholder="John Doe" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brandBlue outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Email</label>
+                        <input type="email" id="reg-email" required placeholder="user@example.com" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brandBlue outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Password</label>
+                        <input type="password" id="reg-password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brandBlue outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Confirm Password</label>
+                        <input type="password" id="reg-confirm-password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brandBlue outline-none transition">
+                    </div>
+
+                    <button type="submit" class="w-full bg-brandYellow hover:bg-[#e0b722] text-brandDark font-extrabold py-3.5 rounded-xl shadow transition text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-user-check"></i>
+                        <span>CREATE ACCOUNT</span>
+                    </button>
+                </form>
+
+                <div class="text-center pt-2 border-t border-gray-100 text-xs text-gray-500">
+                    Already have an account? <button onclick="navigateTo('login')" class="text-brandBlue font-bold hover:underline">Login here</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================== -->
+    <!-- 7. DASHBOARD PAGE (`dashboard.html`) -->
+    <!-- ================================================== -->
+    <section id="page-dashboard" class="page-view">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            
+            <!-- Welcome Banner -->
+            <div class="bg-gradient-to-r from-brandBlue to-[#28739b] rounded-3xl p-8 text-white shadow-xl mb-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                    <h1 class="text-3xl font-extrabold">Hello, <span id="dash-user-name">User</span>!</h1>
+                    <p class="text-blue-100 text-sm mt-2">Welcome to PET POINT. Ready to take care of your pet?</p>
+                </div>
+
+                <button onclick="navigateTo('booking')" class="bg-brandYellow hover:bg-[#e0b722] text-brandDark font-extrabold px-6 py-3.5 rounded-2xl shadow-lg transition flex items-center gap-2 whitespace-nowrap text-sm">
+                    <i class="fa-solid fa-calendar-plus"></i>
+                    <span>BOOK A SERVICE</span>
+                </button>
+            </div>
+
+            <!-- Primary Book Card -->
+            <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-card mb-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-brandDark">Book a Service</h2>
+                    <p class="text-gray-600 text-sm mt-1">Choose a service and schedule your pet's visit.</p>
+                </div>
+                <button onclick="navigateTo('booking')" class="bg-brandYellow hover:bg-[#e0b722] text-brandDark font-extrabold px-8 py-4 rounded-2xl shadow transition text-base">
+                    BOOK NOW
+                </button>
+            </div>
+
+            <!-- Services Brief Info Cards -->
+            <h3 class="text-xl font-bold text-brandDark mb-6">Available Care Options</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-2">
+                    <div class="w-10 h-10 rounded-xl bg-brandSoftYellow flex items-center justify-center text-brandDark font-bold">
+                        <i class="fa-solid fa-shower"></i>
+                    </div>
+                    <h4 class="font-bold text-brandDark">Grooming</h4>
+                    <p class="text-xs text-gray-500 leading-relaxed">Full cleanliness, bathing, and nail care for your pet.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-2">
+                    <div class="w-10 h-10 rounded-xl bg-brandSoftBlue flex items-center justify-center text-brandBlue font-bold">
+                        <i class="fa-solid fa-stethoscope"></i>
+                    </div>
+                    <h4 class="font-bold text-brandDark">Basic Health Check</h4>
+                    <p class="text-xs text-gray-500 leading-relaxed">Physical observation and early health insights.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-2">
+                    <div class="w-10 h-10 rounded-xl bg-brandSoftPink flex items-center justify-center text-brandPink font-bold">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                    </div>
+                    <h4 class="font-bold text-brandDark">Groom + Check</h4>
+                    <p class="text-xs text-gray-500 leading-relaxed">Combine grooming and basic health observation.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-2">
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 font-bold">
+                        <i class="fa-solid fa-truck"></i>
+                    </div>
+                    <h4 class="font-bold text-brandDark">Pick-up & Drop-off</h4>
+                    <p class="text-xs text-gray-500 leading-relaxed">Convenient transportation option for your schedule.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ================================================== -->
+    <!-- 8. BOOKING PAGE (`booking.html`) -->
+    <!-- ================================================== -->
+    <section id="page-booking" class="page-view">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="text-center mb-10">
+                <span class="text-brandBlue font-bold text-xs uppercase tracking-widest">Schedule a Visit</span>
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-brandDark mt-1">Book a Service</h1>
+                <p class="text-gray-600 mt-2 text-sm">Please fill out the form below to reserve your appointment.</p>
+            </div>
+
+            <!-- Error State Banner (Hidden by default) -->
+            <div id="booking-error-banner" class="hidden mb-6 bg-rose-50 border border-rose-200 rounded-3xl p-6 text-center space-y-3">
+                <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto text-xl">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-rose-900">Something went wrong</h3>
+                    <p class="text-sm text-rose-700">Your booking could not be submitted. Please try again.</p>
+                </div>
+                <button onclick="retryBookingSubmit()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-6 py-2.5 rounded-xl text-xs shadow">
+                    TRY AGAIN
+                </button>
+            </div>
+
+            <div class="bg-white rounded-3xl p-6 sm:p-10 shadow-card border border-gray-100">
+                <form id="booking-form" onsubmit="handleBookingSubmit(event)" class="space-y-8">
+                    
+                    <!-- OWNER INFORMATION -->
+                    <div class="space-y-4">
+                        <h3 class="text-base font-bold text-brandDark border-b pb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-user text-brandBlue"></i> OWNER INFORMATION
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Full Name *</label>
+                                <input type="text" id="owner-name" required placeholder="Full Name" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brandBlue outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Email *</label>
+                                <input type="email" id="owner-email" required placeholder="Email Address" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brandBlue outline-none transition">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">WhatsApp Number *</label>
+                            <input type="tel" id="whatsapp-num" required placeholder="e.g. 081234567890" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brandBlue outline-none transition">
+                        </div>
+                    </div>
+
+                    <!-- PET INFORMATION -->
+                    <div class="space-y-4">
+                        <h3 class="text-base font-bold text-brandDark border-b pb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-paw text-brandYellow"></i> PET INFORMATION
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Pet Name *</label>
+                                <input type="text" id="pet-name" required placeholder="e.g. Mochi" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brandBlue outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Species *</label>
+                                <select id="pet-species" required class="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brandBlue outline-none transition bg-white">
+                                    <option value="Dog">Dog</option>
+                                    <option value="Cat" selected>Cat</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Age *</label>
+                                <input type="text" id="pet-age" required placeholder="e.g. 2 Years" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brandBlue outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Gender *</label>
+                                <select id="pet-gender" required class="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brandBlue outline-none transition bg-white">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SERVICE SELECTION -->
+                    <div class="space-y-4">
+                        <h3 class="text-base font-bold text-brandDark border-b pb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-brandBlue"></i> SERVICE
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <label class="border-2 rounded-2xl p-4 cursor-pointer hover:border-brandBlue transition flex flex-col justify-between space-y-2 bg-gray-50/50 has-[:checked]:border-brandBlue has-[:checked]:bg-brandSoftBlue">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-sm text-brandDark">Grooming</span>
+                                    <input type="radio" name="choose-service" value="Grooming" class="accent-brandBlue">
+                                </div>
+                                <span class="text-xs text-gray-500">Cleanliness & comfort</span>
+                            </label>
+
+                            <label class="border-2 rounded-2xl p-4 cursor-pointer hover:border-brandBlue transition flex flex-col justify-between space-y-2 bg-gray-50/50 has-[:checked]:border-brandBlue has-[:checked]:bg-brandSoftBlue">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-sm text-brandDark">Basic Health Check</span>
+                                    <input type="radio" name="choose-service" value="Basic Health Check" class="accent-brandBlue">
+                                </div>
+                                <span class="text-xs text-gray-500">Health observation</span>
+                            </label>
+
+                            <label class="border-2 rounded-2xl p-4 cursor-pointer hover:border-brandYellow transition flex flex-col justify-between space-y-2 bg-amber-50/40 has-[:checked]:border-brandYellow has-[:checked]:bg-brandSoftYellow">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-sm text-brandDark">Groom + Check</span>
+                                    <input type="radio" name="choose-service" value="Groom + Check" checked class="accent-brandYellow">
+                                </div>
+                                <span class="text-xs text-amber-700 font-bold">Combination</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- TRANSPORTATION (SEPARATE OPTION) -->
+                    <div class="space-y-4">
+                        <h3 class="text-base font-bold text-brandDark border-b pb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-truck text-brandPink"></i> TRANSPORTATION
+                        </h3>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <label class="border-2 rounded-2xl p-4 cursor-pointer hover:border-brandBlue transition flex items-center justify-between bg-gray-50/50 has-[:checked]:border-brandBlue has-[:checked]:bg-brandSoftBlue">
+                                <div>
+                                    <p class="font-bold text-sm text-brandDark">Self Drop-off</p>
+                                    <p class="text-xs text-gray-500">Bring your pet to PET POINT</p>
+                                </div>
+                                <input type="radio" name="transport-option" value="Self Drop-off" checked onchange="toggleTransportFields()" class="accent-brandBlue">
+                            </label>
+
+                            <label class="border-2 rounded-2xl p-4 cursor-pointer hover:border-brandPink transition flex items-center justify-between bg-gray-50/50 has-[:checked]:border-brandPink has-[:checked]:bg-brandSoftPink">
+                                <div>
+                                    <p class="font-bold text-sm text-brandDark">Pick-up & Drop-off</p>
+                                    <p class="text-xs text-gray-500">Transportation service</p>
+                                </div>
+                                <input type="radio" id="radio-pickup" name="transport-option" value="Pick-up & Drop-off" onchange="toggleTransportFields()" class="accent-brandPink">
+                            </label>
+                        </div>
+
+                        <!-- Conditional Fields for Pick-up & Drop-off -->
+                        <div id="transport-extra-fields" class="hidden bg-brandSoftPink/40 border border-brandPink/30 rounded-2xl p-5 space-y-4">
+                            <p class="text-xs font-bold text-rose-700 uppercase tracking-wider"><i class="fa-solid fa-location-dot"></i> Pick-up Details</p>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Pick-up Address</label>
+                                <input type="text" id="pickup-address" placeholder="Enter your full street address" class="w-full px-3 py-2.5 rounded-xl border border-gray-300 text-xs focus:ring-1 focus:ring-brandPink outline-none bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Preferred Pick-up Time</label>
+                                <input type="time" id="pickup-time" value="09:00" class="w-full sm:w-1/2 px-3 py-2.5 rounded-xl border border-gray-300 text-xs focus:ring-1 focus:ring-brandPink outline-none bg-white">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SCHEDULE -->
+                    <div class="space-y-4">
+                        <h3 class="text-base font-bold text-brandDark border-b pb-2 flex items-center gap-2">
+                            <i class="fa-regular fa-clock text-brandBlue"></i> SCHEDULE
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Preferred Date *</label>
+                                <input type="date" id="preferred-date" required class="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brandBlue outline-none bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Preferred Time *</label>
+                                <select id="preferred-time" required class="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brandBlue outline-none bg-white">
+                                    <option value="10:00 WITA">10:00 WITA</option>
+                                    <option value="13:00 WITA">13:00 WITA</option>
+                                    <option value="14:00 WITA" selected>14:00 WITA</option>
+                                    <option value="16:00 WITA">16:00 WITA</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ADDITIONAL NOTES -->
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">ADDITIONAL NOTES</label>
+                        <textarea id="special-notes" rows="3" placeholder="Notes / Special Request..." class="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brandBlue outline-none resize-none"></textarea>
+                    </div>
+
+                    <!-- SUBMIT BUTTON -->
+                    <div class="pt-2">
+                        <button type="submit" id="btn-submit-booking" class="w-full bg-brandYellow hover:bg-[#e0b722] text-brandDark font-extrabold py-4 rounded-2xl shadow-lg transition text-base flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>CONFIRM BOOKING</span>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================== -->
+    <!-- 9. BOOKING CONFIRMED PAGE (`booking-confirmed.html`) -->
+    <!-- ================================================== -->
+    <section id="page-booking-confirmed" class="page-view">
+        <div class="max-w-2xl mx-auto px-4 py-16">
+            <div class="bg-white rounded-3xl p-8 sm:p-12 shadow-xl border border-gray-100 text-center space-y-8">
+                
+                <div class="w-20 h-20 bg-brandSoftYellow rounded-3xl flex items-center justify-center text-4xl mx-auto shadow-sm">
+                    🎉
+                </div>
+
+                <div class="space-y-2">
+                    <h1 class="text-3xl font-extrabold text-brandDark">Booking Confirmed!</h1>
+                    <p class="text-brandBlue font-medium text-sm">Your booking has been successfully submitted to PET POINT.</p>
+                </div>
+
+                <!-- Summary Display -->
+                <div class="bg-brandBg rounded-2xl p-6 text-left border border-gray-200 space-y-3">
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <span class="text-xs font-bold text-gray-500 uppercase">Booking ID</span>
+                        <span id="confirm-booking-id" class="text-sm font-extrabold text-brandBlue">PP-4827</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-y-3 text-xs sm:text-sm">
+                        <div>
+                            <span class="text-gray-400 block text-[11px]">Pet</span>
+                            <span id="confirm-pet" class="font-bold text-brandDark">Mochi</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400 block text-[11px]">Service</span>
+                            <span id="confirm-service" class="font-bold text-brandDark">Groom + Check</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400 block text-[11px]">Date</span>
+                            <span id="confirm-date" class="font-bold text-brandDark">30 September 2026</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400 block text-[11px]">Time</span>
+                            <span id="confirm-time" class="font-bold text-brandDark">14:00 WITA</span>
+                        </div>
+                        <div class="col-span-2">
+                            <span class="text-gray-400 block text-[11px]">Transportation</span>
+                            <span id="confirm-transport" class="font-bold text-brandDark">Pick-up & Drop-off</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-2">
+                    <button onclick="navigateTo('dashboard')" class="w-full bg-brandYellow hover:bg-[#e0b722] text-brandDark font-extrabold py-3.5 px-6 rounded-2xl shadow transition text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-gauge"></i>
+                        <span>BACK TO DASHBOARD</span>
+                    </button>
+                    
+                    <button onclick="navigateTo('booking')" class="w-full bg-white hover:bg-gray-100 border-2 border-gray-200 text-brandDark font-bold py-3.5 px-6 rounded-2xl transition text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>BOOK ANOTHER SERVICE</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================== -->
+    <!-- 10. CONTACT PAGE (`contact.html`) -->
+    <!-- ================================================== -->
+    <section id="page-contact" class="page-view">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-brandBlue font-bold text-xs uppercase tracking-widest">Get in Touch</span>
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-brandDark mt-1">Contact PET POINT</h1>
+                <p class="text-gray-600 mt-2 text-sm">We are here to answer your questions and assist with your bookings.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 max-w-5xl mx-auto">
+                <!-- Contact Cards -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100 space-y-6">
+                        <h3 class="text-xl font-bold text-brandDark border-b pb-3">Contact Information</h3>
+                        
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-brandSoftYellow flex items-center justify-center text-brandDark flex-shrink-0">
+                                <i class="fa-brands fa-whatsapp text-xl text-emerald-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-semibold">WhatsApp</p>
+                                <p class="text-sm font-bold text-brandDark">+62 812-3456-7890</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-brandSoftBlue flex items-center justify-center text-brandBlue flex-shrink-0">
+                                <i class="fa-solid fa-envelope text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-semibold">Email</p>
+                                <p class="text-sm font-bold text-brandDark">petpointpoint02@gmail.com</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-brandSoftPink flex items-center justify-center text-brandPink flex-shrink-0">
+                                <i class="fa-brands fa-instagram text-xl text-rose-500"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-semibold">Instagram</p>
+                                <p class="text-sm font-bold text-brandDark">@petpoint.official</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 flex-shrink-0">
+                                <i class="fa-solid fa-location-dot text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-semibold">Location</p>
+                                <p class="text-sm font-bold text-brandDark">Makassar, Sulawesi Selatan</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 flex-shrink-0">
+                                <i class="fa-solid fa-clock text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-semibold">Operating Hours</p>
+                                <p class="text-sm font-bold text-brandDark">Monday - Sunday: 08:00 - 18:00 WITA</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simple Direct Message Form -->
+                <div class="lg:col-span-7">
+                    <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100">
+                        <h3 class="text-xl font-bold text-brandDark mb-4">Send a Message</h3>
+                        <form onsubmit="handleContactSubmit(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Your Name</label>
+                                <input type="text" required placeholder="Name" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brandBlue outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Email Address</label>
+                                <input type="email" required placeholder="Email" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brandBlue outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Message</label>
+                                <textarea rows="4" required placeholder="How can we help you?" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brandBlue outline-none resize-none"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-brandBlue hover:bg-[#3182ac] text-white font-bold py-3.5 rounded-xl shadow transition text-sm">
+                                SEND MESSAGE
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="bg-brandDark text-white pt-12 pb-8 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            
+            <div class="space-y-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-brandYellow rounded-xl flex items-center justify-center text-brandDark font-bold">
+                        <i class="fa-solid fa-paw"></i>
+                    </div>
+                    <span class="text-xl font-extrabold tracking-tight">PET POINT</span>
+                </div>
+                <p class="text-xs text-gray-400 leading-relaxed">
+                    Groom. Check. Care.<br>
+                    More than just grooming. We help pet owners care for their pets with greater comfort and information.
+                </p>
+            </div>
+
+            <div>
+                <h4 class="text-xs font-bold text-brandYellow uppercase tracking-wider mb-3">Pages</h4>
+                <ul class="space-y-2 text-xs text-gray-300">
+                    <li><button onclick="navigateTo('home')" class="hover:text-brandYellow">Home</button></li>
+                    <li><button onclick="navigateTo('about')" class="hover:text-brandYellow">About Us</button></li>
+                    <li><button onclick="navigateTo('services')" class="hover:text-brandYellow">Services</button></li>
+                    <li><button onclick="navigateTo('how-it-works')" class="hover:text-brandYellow">How It Works</button></li>
+                    <li><button onclick="navigateTo('contact')" class="hover:text-brandYellow">Contact</button></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-xs font-bold text-brandYellow uppercase tracking-wider mb-3">Portal</h4>
+                <ul class="space-y-2 text-xs text-gray-300">
+                    <li><button onclick="navigateTo('login')" class="hover:text-brandYellow">Login</button></li>
+                    <li><button onclick="navigateTo('register')" class="hover:text-brandYellow">Register</button></li>
+                    <li><button onclick="navigateTo('dashboard')" class="hover:text-brandYellow">Dashboard</button></li>
+                    <li><button onclick="navigateTo('booking')" class="hover:text-brandYellow">Booking</button></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-xs font-bold text-brandYellow uppercase tracking-wider mb-3">Contact Info</h4>
+                <p class="text-xs text-gray-300 mb-1">Email: petpointpoint02@gmail.com</p>
+                <p class="text-xs text-gray-300 mb-1">WhatsApp: +62 812-3456-7890</p>
+                <p class="text-xs text-gray-300">Location: Makassar</p>
+            </div>
+
+        </div>
+
+        <div class="border-t border-slate-800 pt-6 text-center text-xs text-gray-400">
+            PET POINT © 2026 — Groom. Check. Care. All rights reserved.
+        </div>
+    </div>
+</footer>
+
+<!-- ================================================================= -->
+<!-- JAVASCRIPT LOGIC & ROUTING & EMAILJS CONFIGURATION -->
+<!-- ================================================================= -->
+<script>
+    /*
+     * =============================================================
+     * EMAILJS CONFIGURATION (EXACT AS REQUESTED)
+     * =============================================================
+     */
+    const EMAILJS_SERVICE_ID = "020327galaksi";
+    const EMAILJS_TEMPLATE_ID = "template_tq4k2dh";
+    const EMAILJS_PUBLIC_KEY = "_kYvxXLf_YZzcnFRS";
+    const ADMIN_EMAIL = "petpointpoint02@gmail.com";
+
+    // Initialize EmailJS Browser SDK
+    if (window.emailjs) {
+        emailjs.init({
+            publicKey: EMAILJS_PUBLIC_KEY
+        });
+    }
+
+    /*
+     * =============================================================
+     * STATE & LOCALSTORAGE SIMULATION
+     * =============================================================
+     */
+    function getCurrentUser() {
+        const userStr = localStorage.getItem('petpoint_user');
+        return userStr ? JSON.parse(userStr) : null;
+    }
+
+    function setCurrentUser(user) {
+        if (user) {
+            localStorage.setItem('petpoint_user', JSON.stringify(user));
+        } else {
+            localStorage.removeItem('petpoint_user');
+        }
+    }
+
+    function getLatestBooking() {
+        const bookingStr = localStorage.getItem('petpoint_latest_booking');
+        return bookingStr ? JSON.parse(bookingStr) : null;
+    }
+
+    function setLatestBooking(bookingData) {
+        localStorage.setItem('petpoint_latest_booking', JSON.stringify(bookingData));
+    }
+
+    /*
+     * =============================================================
+     * MULTI-PAGE NAVIGATION ROUTER
+     * =============================================================
+     */
+    function navigateTo(pageId) {
+        // Guard protected booking page
+        if (pageId === 'booking' || pageId === 'dashboard') {
+            const user = getCurrentUser();
+            if (!user) {
+                pageId = 'login';
+            }
+        }
+
+        // Hide all pages
+        const pages = document.querySelectorAll('.page-view');
+        pages.forEach(p => p.classList.remove('active'));
+
+        // Show selected page
+        const targetPage = document.getElementById('page-' + pageId);
+        if (targetPage) {
+            targetPage.classList.add('active');
+        }
+
+        // Update navbar active state
+        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+        const activeNav = document.getElementById('nav-' + pageId);
+        if (activeNav) activeNav.classList.add('active');
+
+        // Close mobile menu if open
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+        }
+
+        // Populate page specific data
+        if (pageId === 'dashboard') {
+            const user = getCurrentUser();
+            if (user) {
+                document.getElementById('dash-user-name').innerText = user.name || user.email.split('@')[0];
+            }
+        } else if (pageId === 'booking-confirmed') {
+            renderConfirmedBookingData();
+        } else if (pageId === 'booking') {
+            document.getElementById('booking-error-banner').classList.add('hidden');
+            const user = getCurrentUser();
+            if (user) {
+                if (user.name) document.getElementById('owner-name').value = user.name;
+                if (user.email) document.getElementById('owner-email').value = user.email;
+            }
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleMobileMenu() {
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenu) mobileMenu.classList.toggle('hidden');
+    }
+
+    function handleBookNowClick() {
+        const user = getCurrentUser();
+        if (user) {
+            navigateTo('booking');
+        } else {
+            navigateTo('login');
+        }
+    }
+
+    /*
+     * =============================================================
+     * AUTHENTICATION HANDLERS
+     * =============================================================
+     */
+    function updateAuthUI() {
+        const user = getCurrentUser();
+        const controls = document.getElementById('auth-header-controls');
+        const mobileControls = document.getElementById('mobile-auth-controls');
+        const navDashboard = document.getElementById('nav-dashboard');
+        const mobileNavDashboard = document.getElementById('mobile-nav-dashboard');
+
+        if (user) {
+            if (navDashboard) navDashboard.classList.remove('hidden');
+            if (mobileNavDashboard) mobileNavDashboard.classList.remove('hidden');
+
+            controls.innerHTML = `
+                <button onclick="navigateTo('dashboard')" class="text-xs font-bold text-brandDark bg-gray-100 hover:bg-gray-200 px-4 py-2.5 rounded-2xl transition flex items-center gap-2">
+                    <i class="fa-solid fa-user text-brandBlue"></i>
+                    <span>${user.name || user.email.split('@')[0]}</span>
+                </button>
+                <button onclick="handleLogout()" class="text-xs font-bold text-gray-500 hover:text-rose-600 px-3 py-2">
+                    Logout
+                </button>
+                <button onclick="navigateTo('booking')" class="bg-brandYellow hover:bg-[#e0b722] text-brandDark font-extrabold px-5 py-2.5 rounded-2xl shadow text-xs flex items-center gap-1.5">
+                    <i class="fa-regular fa-calendar-check"></i> BOOK NOW
+                </button>
+            `;
+
+            mobileControls.innerHTML = `
+                <button onclick="navigateTo('dashboard')" class="block w-full text-left px-4 py-2 rounded-xl text-sm font-bold text-brandBlue">Dashboard (${user.name || user.email})</button>
+                <button onclick="handleLogout()" class="block w-full text-left px-4 py-2 rounded-xl text-sm font-semibold text-rose-600">Logout</button>
+            `;
+        } else {
+            if (navDashboard) navDashboard.classList.add('hidden');
+            if (mobileNavDashboard) mobileNavDashboard.classList.add('hidden');
+
+            controls.innerHTML = `
+                <button onclick="navigateTo('login')" class="text-xs font-bold text-gray-700 hover:text-brandBlue px-4 py-2">Login</button>
+                <button onclick="navigateTo('register')" class="bg-brandYellow hover:bg-[#e0b722] text-brandDark font-extrabold px-5 py-2.5 rounded-2xl shadow text-xs">Register</button>
+                <button onclick="navigateTo('login')" class="bg-brandBlue hover:bg-[#3182ac] text-white font-bold px-5 py-2.5 rounded-2xl shadow text-xs">BOOK NOW</button>
+            `;
+
+            mobileControls.innerHTML = `
+                <button onclick="navigateTo('login')" class="block w-full text-left px-4 py-2 rounded-xl text-sm font-bold text-brandBlue">Login</button>
+                <button onclick="navigateTo('register')" class="block w-full text-left px-4 py-2 rounded-xl text-sm font-bold text-brandDark">Register</button>
+            `;
+        }
+    }
+
+    function handleLoginSubmit(e) {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const user = {
+            name: email.split('@')[0],
+            email: email
+        };
+        setCurrentUser(user);
+        updateAuthUI();
+        navigateTo('dashboard');
+    }
+
+    function handleRegisterSubmit(e) {
+        e.preventDefault();
+        const name = document.getElementById('reg-name').value;
+        const email = document.getElementById('reg-email').value;
+        const pass = document.getElementById('reg-password').value;
+        const confirmPass = document.getElementById('reg-confirm-password').value;
+
+        if (pass !== confirmPass) {
+            alert("Password and Confirm Password do not match!");
+            return;
+        }
+
+        const user = { name, email };
+        setCurrentUser(user);
+        updateAuthUI();
+        navigateTo('dashboard');
+    }
+
+    function handleLogout() {
+        setCurrentUser(null);
+        updateAuthUI();
+        navigateTo('home');
+    }
+
+    /*
+     * =============================================================
+     * SERVICE & TRANSPORTATION SELECTION HELPERS
+     * =============================================================
+     */
+    function selectServiceAndBook(serviceName) {
+        const serviceRadios = document.getElementsByName('choose-service');
+        for (let radio of serviceRadios) {
+            if (radio.value === serviceName) radio.checked = true;
+        }
+        handleBookNowClick();
+    }
+
+    function selectTransportAndBook() {
+        const transportRadios = document.getElementsByName('transport-option');
+        for (let radio of transportRadios) {
+            if (radio.value === 'Pick-up & Drop-off') radio.checked = true;
+        }
+        toggleTransportFields();
+        handleBookNowClick();
+    }
+
+    function toggleTransportFields() {
+        const pickupRadio = document.getElementById('radio-pickup');
+        const extraFields = document.getElementById('transport-extra-fields');
+        if (pickupRadio && pickupRadio.checked) {
+            extraFields.classList.remove('hidden');
+        } else {
+            extraFields.classList.add('hidden');
+        }
+    }
+
+    /*
+     * =============================================================
+     * BOOKING & EMAILJS SUBMISSION LOGIC
+     * =============================================================
+     */
+    async function handleBookingSubmit(e) {
+        e.preventDefault();
+
+        // Hide error state
+        document.getElementById('booking-error-banner').classList.add('hidden');
+
+        const btnSubmit = document.getElementById('btn-submit-booking');
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Submitting Booking...`;
+
+        // Automatic Booking ID Generation Format: PP-XXXX
+        const bookingId = 'PP-' + Math.floor(1000 + Math.random() * 9000);
+
+        const ownerName = document.getElementById('owner-name').value;
+        const ownerEmail = document.getElementById('owner-email').value;
+        const whatsapp = document.getElementById('whatsapp-num').value;
+
+        const petName = document.getElementById('pet-name').value;
+        const species = document.getElementById('pet-species').value;
+        const age = document.getElementById('pet-age').value;
+        const gender = document.getElementById('pet-gender').value;
+
+        // Service
+        let service = 'Groom + Check';
+        const serviceRadios = document.getElementsByName('choose-service');
+        for (let r of serviceRadios) {
+            if (r.checked) service = r.value;
+        }
+
+        // Transportation
+        let transportation = 'Self Drop-off';
+        const transportRadios = document.getElementsByName('transport-option');
+        for (let r of transportRadios) {
+            if (r.checked) transportation = r.value;
+        }
+
+        const pickupAddress = (transportation === 'Pick-up & Drop-off') ? (document.getElementById('pickup-address').value || 'N/A') : 'N/A';
+        const pickupTime = (transportation === 'Pick-up & Drop-off') ? (document.getElementById('pickup-time').value || 'N/A') : 'N/A';
+
+        const serviceDate = document.getElementById('preferred-date').value;
+        const serviceTime = document.getElementById('preferred-time').value;
+        const notes = document.getElementById('special-notes').value || 'None';
+
+        // Construct exact EmailJS parameters payload as mandated
+        const templateParams = {
+            booking_id: bookingId,
+
+            owner_name: ownerName,
+            owner_email: ownerEmail,
+            whatsapp: whatsapp,
+
+            pet_name: petName,
+            species: species,
+            age: age,
+            gender: gender,
+
+            service: service,
+
+            transportation: transportation,
+            pickup_address: pickupAddress,
+            pickup_time: pickupTime,
+
+            service_date: serviceDate,
+            service_time: serviceTime,
+
+            notes: notes
+        };
+
+        const bookingRecord = {
+            booking_id: bookingId,
+            pet_name: petName,
+            service: service,
+            service_date: serviceDate,
+            service_time: serviceTime,
+            transportation: transportation
+        };
+
+        try {
+            // Send Email via EmailJS
+            await emailjs.send(
+                EMAILJS_SERVICE_ID,
+                EMAILJS_TEMPLATE_ID,
+                templateParams
+            );
+
+            // Save to localStorage
+            setLatestBooking(bookingRecord);
+
+            // Success transition to booking-confirmed.html view
+            navigateTo('booking-confirmed');
+
+        } catch (error) {
+            console.error("EmailJS submission error:", error);
+            
+            // ERROR STATE: Stay on Booking page, display retry banner
+            document.getElementById('booking-error-banner').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } finally {
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = `<i class="fa-solid fa-paper-plane"></i> <span>CONFIRM BOOKING</span>`;
+        }
+    }
+
+    function retryBookingSubmit() {
+        document.getElementById('booking-error-banner').classList.add('hidden');
+        document.getElementById('btn-submit-booking').click();
+    }
+
+    function renderConfirmedBookingData() {
+        const booking = getLatestBooking();
+        if (booking) {
+            document.getElementById('confirm-booking-id').innerText = booking.booking_id || 'PP-4827';
+            document.getElementById('confirm-pet').innerText = booking.pet_name || 'Mochi';
+            document.getElementById('confirm-service').innerText = booking.service || 'Groom + Check';
+            document.getElementById('confirm-date').innerText = booking.service_date || '30 September 2026';
+            document.getElementById('confirm-time').innerText = booking.service_time || '14:00 WITA';
+            document.getElementById('confirm-transport').innerText = booking.transportation || 'Pick-up & Drop-off';
+        }
+    }
+
+    function handleContactSubmit(e) {
+        e.preventDefault();
+        alert("Thank you for reaching out! We will respond shortly.");
+        e.target.reset();
+    }
+
+    // On Page Load Initialization
+    window.onload = function() {
+        // Default preferred date to today
+        const dateInput = document.getElementById('preferred-date');
+        if (dateInput) {
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.value = today;
+        }
+
+        updateAuthUI();
+    };
+</script>
